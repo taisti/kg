@@ -32,5 +32,5 @@ print(get_unit_type('teaspoon'))
 print(get_unit_type('tsp'))
 print(get_unit_type('tbsp'))
 
-#lemmatization requires
+#lemmatization required
 print(get_unit_type('teaspoons'))
