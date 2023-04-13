@@ -12,7 +12,7 @@ def processUnitClass(unitTypeClass, search_text):
             for subUnit in subUnits:
                 if search_text in subUnit.hasExactSynonym + subUnit.label:
                     picked_classes += subUnit.label
-                    
+
     return picked_classes
 def get_unit_type(input):
     onto : owl.Ontology = owl.get_ontology('ontologies/io_prototype.rdf').load()
