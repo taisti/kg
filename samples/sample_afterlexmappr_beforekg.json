@@ -1,0 +1,56 @@
+{
+    "name":"Cheesburger Potato Soup",
+    "oboId":"",
+    "match":"No Match",
+    "ingredientSet":[
+       {
+          "name":"potato",
+          "oboId":"FOODON_03302197",
+          "match":"Full Match",
+          "quantity":"6",
+          "unit":""
+       },
+       {
+          "name":"extra lean ground beef",
+          "oboId":"FOODON_00001282",
+          "match":"Component Match",
+          "quantity":"1",
+          "unit":"lb"
+       },
+       {
+          "name":"butter",
+          "oboId":"FOODON_03310351",
+          "match":"Full Term Match",
+          "quantity":"2/3",
+          "unit":"c"
+       }
+    ],
+    "deviceSet":[
+       {
+          "name":"microwave",
+          "oboId":"OBI:0001061",
+          "match":"Full Match"
+       },
+       {
+          "name":"kettle",
+          "oboId":"",
+          "match":"No Match"
+       }
+    ],
+    "instructionSet":[
+       {
+          "stepNo":"1",
+          "content":"Wash potatoes; prick several times with a fork.",
+          "process":"",
+          "oboId":"",
+          "match":"No Match"
+       },
+       {
+          "stepNo":"2",
+          "content":"Microwave them with a wet paper towel covering the potatoes on high for 6-8 minutes.",
+          "process":"cooking by microwave",
+          "oboId":"FOODON:03450011",
+          "match":"Component Match"
+       }
+    ]
+ }
