@@ -1,0 +1,7 @@
+.vscode
+.venv
+venv
+.env
+utils
+LexMapr
+__pycache__

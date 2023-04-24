@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+   xmlns:ns1="http://schema.org/"
+   xmlns:ns2="http://schema.org/operators/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <rdf:Description rdf:about="http://example.com/foodrecipe/1">
+    <rdf:type rdf:resource="http://schema.org/Recipe"/>
+    <ns1:name>No-Bake Nut Cookies</ns1:name>
+    <ns1:url>www.cookbooks.com/Recipe-Details.aspx?id=44874</ns1:url>
+    
+    <ns1:recipeIngredient rdf:about="http://example.com/food/ingredient/0/PATO_0000952">
+      <rdf:type rdf:resource="http://schema.org/Text"/>
+      <ns1:name>brown</ns1:name>
+    </ns1:recipeIngredient>
+
+    <ns2:or rdf:about="http://example.com/food/ingredient/9">
+      <ns1:recipeIngredient rdf:about="http://example.com/food/ingredient/9/FOODON_00004327"/>
+        <rdf:type rdf:resource="http://schema.org/Text"/>
+        <ns1:name>scone</ns1:name>
+      </ns1:recipeIngredient>
+      
+      <ns1:recipeIngredient rdf:about="http://example.com/food/ingredient/9/FOODON_00002465"/>
+        <rdf:type rdf:resource="http://schema.org/Text"/>
+        <ns1:name>rice</ns1:name>
+      </ns1:recipeIngredient>
+    </ns2:or>
+  </rdf:Description>
+</rdf:RDF>

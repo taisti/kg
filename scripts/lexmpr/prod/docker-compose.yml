@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  lexmapr:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: lexmapr:latest
+    container_name: lexmapr
+    ports:
+      - 5000:5000
+    volumes:
+      # set environment variable APP_PATH with path to current directory
+      # you can set env in .env file created in directory with docker-compose
+      # it will be loaded automatically
+      - ${APP_PATH}/app:/app
+    dns:
+      - 8.8.8.8
