@@ -55,16 +55,6 @@ class Postprocessing:
 
         body = [
             {
-                "title": ...,
-                "link": ...,
-                "ingredientSet": [
-                    for_each_row(row) for _, row in lxmpr_out.iterrows()  # type: ignore
-                ],
-            }
-            for lxmpr_out in lexmapr_output
-        ]
-        body = [
-            {
                 "title": input_body["title"],
                 "link": input_body["link"],
                 "ingredientSet": [
