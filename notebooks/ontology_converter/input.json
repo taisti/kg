@@ -1,0 +1,62 @@
+{
+	"title": "No-Bake Nut Cookies",
+	"link": "www.cookbooks.com/Recipe-Details.aspx?id=44874",
+	"ingredientSet": [
+		{
+			"name": "brown",
+			"oboId": "PATO_0000952",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "sugar",
+			"oboId": "FOODON_03420108",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "milk",
+			"oboId": "UBERON_0001913",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "vanilla",
+			"oboId": "NCBITAXON_51238",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "nut (whole or parts)",
+			"oboId": "FOODON_03306632",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "carya illinoinensis",
+			"oboId": "NCBITAXON_32201",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "butter",
+			"oboId": "FOODON_03310351",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "margarine",
+			"oboId": "FOODON_03301672",
+			"match": "Full Term Match"
+		},
+		{
+			"name": "divided into pieces, thickness <0.3 cm.",
+			"oboId": "FOODON_03430100",
+			"match": "Full Term Match"
+		},
+		{
+			"name": [
+				"rice",
+				"scone"
+			],
+			"oboId": [
+				"FOODON_00004327",
+				"FOODON_00002465"
+			],
+			"match": "Component Match"
+		}
+	]
+}
