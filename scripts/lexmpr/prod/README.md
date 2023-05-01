@@ -7,6 +7,7 @@
 `			output_handle.write('\n'.join(output))`
 
 Run the `pip install .` command once again inside the cloned repository. Go back to this directory.
+
 3. Run the `src/main.py` file (make sure you are running it from the top of the repository, as for now it uses hardcoded relative path to lexmapr config file). 
 4. Open the browser, go to 127.0.0.1:5000.
 5. Choose a file to analyze (file format in the `scripts/test.csv`)
