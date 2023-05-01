@@ -1,9 +1,26 @@
+# Running the program directly
+
+1. Add working directory to the PATH environmental variable.
+2. If you do not have lexmapr installed, clone https://github.com/taisti/LexMapr.git and install the package. If your machine is set up to work with a different code page than the default POSIX one (i.e. you are on Windows), modify the ontohelper.py file and set up encoding in the do_output_tsv function.
+
+`		with (open(output_file_basename + '.tsv', 'w', encoding='utf-8')) as output_handle:`
+`			output_handle.write('\n'.join(output))`
+
+Run the `pip install .` command once again inside the cloned repository. Go back to this directory.
+3. Run the `src/main.py` file (make sure you are running it from the top of the repository, as for now it uses hardcoded relative path to lexmapr config file). 
+4. Open the browser, go to 127.0.0.1:5000.
+5. Choose a file to analyze (file format in the `scripts/test.csv`)
+6. Press submit.
+
+Optionally you can access the method via a REST api. Endpoint for the api: 127.0.0.1:5000/api/lexmapr 
+
+
 # How to install
 
 Create `.env` file with `APP_PATH` env with path to current working directory.
 
 ```.env
-APP_PATH=/home/user/lexmapr
+APP_PATH=/home/user/lexmapr_api
 ```
 
 ## Linux
