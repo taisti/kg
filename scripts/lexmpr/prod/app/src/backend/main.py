@@ -1,8 +1,6 @@
-import logging
-
 import werkzeug
 from flask import Flask
-from flask_restx import Resource, Api, fields, reqparse
+from flask_restx import Resource, Api, reqparse
 from backend.lexmapr_api import run
 
 
@@ -19,14 +17,13 @@ parser.add_argument('csv', required=True, type=werkzeug.datastructures.FileStora
 class LexMapr(Resource):
     @staticmethod
     @api.doc(parser=parser)
-    @api.marshal_with(fields.String)
     def post() -> dict:
         args = parser.parse_args()
         csv_input: str = args['csv']\
             .read()\
             .decode('utf-8')
         output_data = run(csv_input)
-        logging.debug(output_data)
+        print(output_data)
         return output_data
 
 

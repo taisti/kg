@@ -25,7 +25,6 @@ class Postprocessing:
             LexMaprOutput: requests output
         """
         def for_each_row(row: Dict):
-            pprint.pprint(row)
             match = row["Match_Status(Macro Level)"]
             if match == "No Match":
                 return None
@@ -54,6 +53,19 @@ class Postprocessing:
             for (_, recipe_info), recipe_ingredients in zip(
                 request_input.iterrows(), lexmapr_output
             )
+        ]
+
+        # remove None values from ingredientSet
+        body = [{
+            'title': recipe['title'],
+            'link': recipe['link'],
+            'ingredientSet': [
+                entity
+                for entity in recipe['ingredientSet']
+                if entity
+            ]
+        }
+         for recipe in body
         ]
 
         return body
