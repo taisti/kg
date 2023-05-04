@@ -56,9 +56,11 @@ class Postprocessing:
             {
                 "title": input_body["title"],
                 "link": input_body["link"],
+                "ingredients" : input_body["ingredients"],
                 "ingredientSet": [
                     {"name" : entity[1]["Matched_Components"].split(":")[0].strip("[\[']"),
                      "oboId": entity[1]["Matched_Components"].split(":")[1].strip("[\[']"),
+
                      "match" : entity[1]["Match_Status(Macro Level)"] } 
                      for entity in lxmpr_out.iterrows() if entity[1]["Match_Status(Macro Level)"] != "No Match"
                 ],

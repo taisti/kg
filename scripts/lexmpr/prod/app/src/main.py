@@ -15,7 +15,6 @@ class LexMapr(Resource):
     def post(self) -> dict:
         csv_input = request.data.decode("utf-8")
         output_data = run(csv_input)
-        print(output_data)
         return output_data
 
 api.add_resource(LexMapr, "/api/lexmapr")
