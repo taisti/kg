@@ -1,8 +1,11 @@
 import ast
-import pprint
+
+from nltk import sent_tokenize
+from thefuzz import fuzz
+from thefuzz.process import extractOne
 
 import pandas as pd
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 class Postprocessing:
@@ -55,17 +58,40 @@ class Postprocessing:
             )
         ]
 
-        # remove None values from ingredientSet
+        # remove None values from ingredientSet and add numer of sentence
+        sentences = [
+            {
+                sent_no: tokenized_sent
+                for new_line_sen in s.split('\n')
+                for sent_no, tokenized_sent in enumerate(sent_tokenize(new_line_sen))
+            }
+            for s in request_input['ingredients']
+        ]
+
+        def get_score_above(text: str, choices: Dict[int, str]) -> Optional[int]:
+            min_value: float = 0.5
+            best_match, score = extractOne(text, choices.values(), scorer=fuzz.partial_token_sort_ratio)
+            if score > min_value:
+                for sent_no, val in choices.items():
+                    if val == best_match:
+                        return sent_no
+            else:
+                return None
+
         body = [{
             'title': recipe['title'],
             'link': recipe['link'],
-            'ingredientSet': [
-                entity
+            'ingredientSet': [{
+                    **entity,
+                    'sentence': get_score_above(entity['name'], s)
+                    if isinstance(entity['name'], str) else
+                    [get_score_above(n, s) for n in entity['name']]
+                }
                 for entity in recipe['ingredientSet']
                 if entity
             ]
         }
-         for recipe in body
+         for s, recipe in zip(sentences, body)
         ]
 
         return body

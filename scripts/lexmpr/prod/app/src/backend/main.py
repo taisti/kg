@@ -23,7 +23,6 @@ class LexMapr(Resource):
             .read()\
             .decode('utf-8')
         output_data = run(csv_input)
-        print(output_data)
         return output_data
 
 
