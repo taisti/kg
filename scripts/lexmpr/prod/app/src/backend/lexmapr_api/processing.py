@@ -1,6 +1,4 @@
-import io
-import logging
-import subprocess
+import os
 from tempfile import NamedTemporaryFile
 from typing import List
 import pandas as pd
@@ -9,6 +7,7 @@ from lexmapr import pipeline as lexmapr_pipeline
 import argparse
 from contextlib import redirect_stdout
 import io
+
 
 class Processing:
     Headers = [
@@ -40,7 +39,7 @@ class Processing:
         Run LexMapr with user parsed input data
 
         Args:
-            data (str): csv string representation
+            csv_text (str): csv string representation
 
         Returns:
             pd.Series: csv string representation
@@ -51,9 +50,10 @@ class Processing:
                 with io.StringIO() as stream, redirect_stdout(stream):
                     file.write(bytes(text, "utf-8"))
                     file.seek(0)
-                    lexmapr_pipeline.run(argparse.Namespace(input_file=file.name, config='scripts/lexmpr/prod/app/conf/lex_mapr.json',
-                                                full=None, output=None, version=False,
-                                                bucket=False, no_cache=False, profile=None))
+                    lexmapr_pipeline.run(
+                        argparse.Namespace(input_file=file.name, config='/home/adam/Desktop/Projects/PUT/TAISTI/kg/scripts/lexmpr/prod/app/conf/lex_mapr.json',
+                                           full=None, output=None, version=False,
+                                           bucket=False, no_cache=False, profile=None))
                     output = stream.getvalue()
                     return output
         results = csv_text.apply(for_each_row)
@@ -65,7 +65,7 @@ class Processing:
         Convert output string into a DataFrame with selected column names
 
         Args:
-            input (pd.Series): csv string
+            output (pd.Series): csv string
 
         Returns:
             List[pd.DataFrame]: parsed csv for each output of lexmapr

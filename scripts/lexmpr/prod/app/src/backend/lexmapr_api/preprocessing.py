@@ -1,6 +1,5 @@
 import io
 import json
-import pprint
 from typing import List
 import pandas as pd
 
@@ -16,8 +15,8 @@ class Preprocessing:
         "ingredients_entities",
     ]
 
-    def __init__(self, input: str):
-        self.input = input
+    def __init__(self, data_input: str):
+        self.input = data_input
 
     def run(self):
         df = self.parse_input(self.input)
@@ -26,7 +25,7 @@ class Preprocessing:
         return df, csv_text
 
     @staticmethod
-    def parse_input(input: str) -> pd.DataFrame:
+    def parse_input(data_input: str) -> pd.DataFrame:
         """
         Convert input csv string with columns
 
@@ -35,22 +34,22 @@ class Preprocessing:
         into a DataFrame
 
         Args:
-            input (str): csv string
+            data_input (str): csv string
 
         Returns:
             pd.DataFrame: parsed csv
         """
-        text = io.StringIO(input)
+        text = io.StringIO(data_input)
         df = pd.read_csv(text, sep=",")
         return df
 
     @staticmethod
-    def merge_important_entities(entities: pd.Series) -> pd.Series:
+    def merge_important_entities(recipes: pd.Series) -> pd.Series:
         """
         Connect entities into string if not QUANTITY or UNIT entity type
 
         Args:
-            entities (pd.Series): text with QUANTITY and UNITS entities
+            recipes (pd.Series): text with QUANTITY and UNITS entities
 
         Returns:
             pd.Series: text without QUANTITY and UNIT entities
@@ -65,16 +64,16 @@ class Preprocessing:
             ]
             return text
 
-        merged_entities = entities.apply(for_each_row)
+        merged_entities = recipes.apply(for_each_row)
         return merged_entities
 
     @staticmethod
-    def convert_entities_to_lexmapr_input(entities: pd.Series) -> pd.Series:
+    def convert_entities_to_lexmapr_input(recipes: pd.Series) -> pd.Series:
         """
         Converts entities to csv input format
 
         Args:
-            entities (pd.Series): entities without QUANTITY and UNIT
+            recipes (pd.Series): entities without QUANTITY and UNIT
 
         Returns:
             pd.Series: csv string
@@ -88,5 +87,5 @@ class Preprocessing:
             data_for_lexmapr = s.getvalue()
             return data_for_lexmapr
 
-        csv_text = entities.apply(for_each_row)
+        csv_text = recipes.apply(for_each_row)
         return csv_text
