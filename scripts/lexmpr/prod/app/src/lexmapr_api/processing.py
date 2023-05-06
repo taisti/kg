@@ -51,7 +51,7 @@ class Processing:
                 with io.StringIO() as stream, redirect_stdout(stream):
                     file.write(bytes(text, "utf-8"))
                     file.seek(0)
-                    #TODO 
+                    #TODO config file path
                     lexmapr_pipeline.run(argparse.Namespace(input_file=file.name, config='scripts/lexmpr/prod/app/conf/lex_mapr.json',
                                                 full=None, output=None, version=False,
                                                 bucket=False, no_cache=False, profile=None))
