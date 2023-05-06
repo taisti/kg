@@ -1,7 +1,6 @@
 import ast
 import re
 
-from nltk import sent_tokenize
 from thefuzz import fuzz
 from thefuzz.process import extractOne
 

@@ -1,12 +1,9 @@
-import os
-from tempfile import NamedTemporaryFile
 from typing import List
 import pandas as pd
 
-from lexmapr import pipeline as lexmapr_pipeline
-import argparse
-from contextlib import redirect_stdout
 import io
+
+from backend.lexmapr_tool import LexMaprTool
 
 
 class Processing:
@@ -24,6 +21,8 @@ class Processing:
         "Matched_Components",
         "Match_Status(Macro Level)",
     ]
+
+    Tool = LexMaprTool('/home/adam/Desktop/Projects/PUT/TAISTI/kg/scripts/lexmpr/prod/app/conf/lex_mapr.json')
 
     def __init__(self, csv_text: pd.Series):
         self.csv_text = csv_text
@@ -44,19 +43,7 @@ class Processing:
         Returns:
             pd.Series: csv string representation
         """
-
-        def for_each_row(text: str) -> str:
-            with NamedTemporaryFile(suffix=".csv", delete=False) as file:
-                with io.StringIO() as stream, redirect_stdout(stream):
-                    file.write(bytes(text, "utf-8"))
-                    file.seek(0)
-                    lexmapr_pipeline.run(
-                        argparse.Namespace(input_file=file.name, config='/home/adam/Desktop/Projects/PUT/TAISTI/kg/scripts/lexmpr/prod/app/conf/lex_mapr.json',
-                                           full=None, output=None, version=False,
-                                           bucket=False, no_cache=False, profile=None))
-                    output = stream.getvalue()
-                    return output
-        results = csv_text.apply(for_each_row)
+        results = csv_text.apply(Processing.Tool.run)
         return results
 
     @staticmethod
