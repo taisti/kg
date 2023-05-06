@@ -1,4 +1,5 @@
 import ast
+import re
 
 from nltk import sent_tokenize
 from thefuzz import fuzz
@@ -69,7 +70,10 @@ class Postprocessing:
 
         def get_score_above(text: str, choices: Dict[int, str]) -> Optional[int]:
             min_value: float = 0.5
-            best_match, score = extractOne(text, choices.values(), scorer=fuzz.partial_ratio)
+            # we have to remove extra info attached by LexMapr inside brackets
+            text = re.sub(r'\(.+\)', '', text).strip()
+
+            best_match, score = extractOne(text, choices.values(), scorer=fuzz.partial_token_sort_ratio)
             if score > min_value:
                 for sent_no, val in choices.items():
                     if val == best_match:

@@ -73,9 +73,9 @@ class Processing:
 
         def for_each_row(row: str):
             text_input = io.StringIO(row)
-            df = pd.read_csv(
-                text_input, sep="\t", names=Processing.Headers
-            ).iloc[1:]
+            df = pd\
+                .read_csv(text_input, sep="\t", names=Processing.Headers)\
+                .iloc[1:]
             df = df.loc[:, Processing.OutputSelectedColumns]
 
             return df
