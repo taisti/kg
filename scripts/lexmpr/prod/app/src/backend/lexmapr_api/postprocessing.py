@@ -61,16 +61,15 @@ class Postprocessing:
         # remove None values from ingredientSet and add numer of sentence
         sentences = [
             {
-                sent_no: tokenized_sent
-                for new_line_sen in s.split('\n')
-                for sent_no, tokenized_sent in enumerate(sent_tokenize(new_line_sen))
+                sent_no: new_line_sen
+                for sent_no, new_line_sen in enumerate(s.split('\n'))
             }
-            for s in request_input['description']
+            for s in request_input['ingredients']
         ]
 
         def get_score_above(text: str, choices: Dict[int, str]) -> Optional[int]:
             min_value: float = 0.5
-            best_match, score = extractOne(text, choices.values(), scorer=fuzz.partial_token_sort_ratio)
+            best_match, score = extractOne(text, choices.values(), scorer=fuzz.partial_ratio)
             if score > min_value:
                 for sent_no, val in choices.items():
                     if val == best_match:
@@ -81,6 +80,7 @@ class Postprocessing:
         body = [{
             'title': recipe['title'],
             'link': recipe['link'],
+            'ingredients': s,
             'ingredientSet': [{
                     **entity,
                     'sentence': get_score_above(entity['name'], s)

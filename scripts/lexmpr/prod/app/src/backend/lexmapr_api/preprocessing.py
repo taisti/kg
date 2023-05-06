@@ -1,6 +1,6 @@
 import io
 import json
-from typing import List
+from typing import List, Dict
 import pandas as pd
 
 
@@ -40,7 +40,11 @@ class Preprocessing:
             pd.DataFrame: parsed csv
         """
         text = io.StringIO(data_input)
-        df = pd.read_csv(text, sep=",")
+        df = pd.read_csv(
+            text,
+            sep=",",
+            converters={k: json.loads for k in ('NER', 'ingredients_entities')}
+        )
         return df
 
     @staticmethod
@@ -55,11 +59,10 @@ class Preprocessing:
             pd.Series: text without QUANTITY and UNIT entities
         """
 
-        def for_each_row(row: str):
-            entities = json.loads(row)
+        def for_each_row(row: List[Dict]):
             text = [
                 ent["entity"]
-                for ent in entities
+                for ent in row
                 if ent["type"] not in ["QUANTITY", "UNIT"]
             ]
             return text
