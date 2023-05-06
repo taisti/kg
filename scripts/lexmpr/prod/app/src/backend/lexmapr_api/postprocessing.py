@@ -65,7 +65,7 @@ class Postprocessing:
                 for new_line_sen in s.split('\n')
                 for sent_no, tokenized_sent in enumerate(sent_tokenize(new_line_sen))
             }
-            for s in request_input['ingredients']
+            for s in request_input['description']
         ]
 
         def get_score_above(text: str, choices: Dict[int, str]) -> Optional[int]:
