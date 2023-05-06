@@ -1,0 +1,63 @@
+{
+    "title": "No-Bake Nut Cookies",
+    "link": "Gathered",
+    "ingredientSet": [
+      {
+        "name": "sugar",
+        "oboId": "FOODON_03420108",
+        "match": "Full Term Match",
+        "sentence": 0
+      },
+      {
+        "name": "milk",
+        "oboId": "UBERON_0001913",
+        "match": "Full Term Match",
+        "sentence": 1
+      },
+      {
+        "name": "vanilla",
+        "oboId": "NCBITaxon_51238",
+        "match": "Full Term Match",
+        "sentence": 2
+      },
+      {
+        "name": "nut (whole or parts)",
+        "oboId": "FOODON_03306632",
+        "match": "Full Term Match",
+        "sentence": 3
+      },
+      {
+        "name": "pecan (whole, raw)",
+        "oboId": "FOODON_03315232",
+        "match": "Full Term Match",
+        "sentence": 4
+      },
+      {
+        "name": "butter",
+        "oboId": "FOODON_03310351",
+        "match": "Full Term Match",
+        "sentence": 5
+      },
+      {
+        "name": "margarine",
+        "oboId": "FOODON_03301672",
+        "match": "Full Term Match",
+        "sentence": 5
+      },
+      {
+        "name": [
+          "rice",
+          "scone"
+        ],
+        "oboId": [
+          "FOODON_00004327",
+          "FOODON_00002465"
+        ],
+        "match": "Component Match",
+        "sentence": [
+          6,
+          6
+        ]
+      }
+    ]
+  }

@@ -37,7 +37,7 @@ class Postprocessing:
             LexMaprOutput: requests output
         """
 
-        def for_each_row(row: Dict):
+        def for_each_row(row: pd.DataFrame):
             match = row["Match_Status(Macro Level)"]
             if match == "No Match":
                 return None
@@ -52,17 +52,21 @@ class Postprocessing:
 
             ingredients_set = {"name": name, "oboId": oboId, "match": match}
             return ingredients_set
-
         body = [
             {
                 "title": input_body["title"],
                 "link": input_body["link"],
+                "ingredients" : input_body["ingredients"],
                 "ingredientSet": [
-                    entity for entity in lxmpr_out["ingredientSet"] if entity
+                    {"name" : entity[1]["Matched_Components"].split(":")[0].strip("[\[']"),
+                     "oboId": entity[1]["Matched_Components"].split(":")[1].strip("[\[']"),
+
+                     "match" : entity[1]["Match_Status(Macro Level)"] } 
+                     for entity in lxmpr_out.iterrows() if entity[1]["Match_Status(Macro Level)"] != "No Match"
                 ],
             }
             for (_, input_body), lxmpr_out in zip(
-                request_input.iterrows(), body
+                request_input.iterrows(), lexmapr_output
             )
         ]
 
