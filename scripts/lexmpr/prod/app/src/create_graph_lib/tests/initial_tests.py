@@ -18,11 +18,11 @@ class InitialTests(unittest.TestCase):
         data_item_obo_id = "IAO_0000027"
         is_about_obo_id = "IAO_0000136"
         food_recipe_obo_id = "FOODON_00004081"
-        self.assertIn("ingredient set", self.converter.world[f"{self.converter.base_obo_iri}{ingredient_set_obo_id}"].label)
-        self.assertIn("ingredient specification", self.converter.world[f"{self.converter.base_obo_iri}{ingredient_specification_obo_id}"].label)
-        self.assertIn("data item", self.converter.world[f"{self.converter.base_obo_iri}{data_item_obo_id}"].label)
-        self.assertIn("is about", self.converter.world[f"{self.converter.base_obo_iri}{is_about_obo_id}"].label)
-        self.assertIn("food recipe", self.converter.world[f"{self.converter.base_obo_iri}{food_recipe_obo_id}"].label)
+        self.assertIn("ingredient set", self.converter.world[f"{self.converter.BASE_OBO_IRI}{ingredient_set_obo_id}"].label)
+        self.assertIn("ingredient specification", self.converter.world[f"{self.converter.BASE_OBO_IRI}{ingredient_specification_obo_id}"].label)
+        self.assertIn("data item", self.converter.world[f"{self.converter.BASE_OBO_IRI}{data_item_obo_id}"].label)
+        self.assertIn("is about", self.converter.world[f"{self.converter.BASE_OBO_IRI}{is_about_obo_id}"].label)
+        self.assertIn("food recipe", self.converter.world[f"{self.converter.BASE_OBO_IRI}{food_recipe_obo_id}"].label)
     def test_creating_new_recipe(self):
         """
         This test adds a test reciepe twice to the world.
@@ -63,7 +63,7 @@ class InitialTests(unittest.TestCase):
         
         # if you want to review the created file, save it here and open it in Protege or text editor
         # path = path_to_file
-        # self.converter.world.save(path+'test.owl')
+        # self.converter.world.save('test.owl')
 
 if __name__ == "__main__":
     unittest.main()

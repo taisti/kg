@@ -1,6 +1,7 @@
-from typing import List, Tuple
+from typing import List, Tuple, Final
 import owlready2 as owl
 import itertools
+from collections import defaultdict
 class IngredientsConverter:
     """
     Converter incorportates food reciepes into Foodon ontology. IRIs for the newly created entity start with the TAISTI prefix. 
@@ -9,19 +10,18 @@ class IngredientsConverter:
     The specification is currently limitted to the is_about relation. 
     """
     #used to create full IRIs based on OBO IDs
-    base_obo_iri = "http://purl.obolibrary.org/obo/"
+    BASE_OBO_IRI: Final[str] = "http://purl.obolibrary.org/obo/"
 
     #classes required to build a model
     imported_classes = {
-        "food recipe" : f"{base_obo_iri}FOODON_00004081",
-        "ingredient set" : f"{base_obo_iri}FOODON_00004082",
-        "ingredient specification" : f"{base_obo_iri}FOODON_00004085",
-        "food material" : f"{base_obo_iri}FOODON_00002403"
+        "food recipe" : f"{BASE_OBO_IRI}FOODON_00004081",
+        "ingredient set" : f"{BASE_OBO_IRI}FOODON_00004082",
+        "ingredient specification" : f"{BASE_OBO_IRI}FOODON_00004085",
+        "food material" : f"{BASE_OBO_IRI}FOODON_00002403"
     }
 
     #id counter - used to create IRIs of new entities
     prefix = "TAISTI"
-    id_counter = itertools.count()
     def get_next_id(self) -> str:
         """
             output: the next ID of an entity in a current graph [str]
@@ -32,8 +32,10 @@ class IngredientsConverter:
 
             :returntype str
         """
-        return f"{self.prefix}_{str(next(self.id_counter)).rjust(8,'0')}"
-
+        for id_counter in itertools.count():
+            taisti_id = str(id_counter).rjust(8,'0')
+            full_id = f"{self.prefix}_{taisti_id}"
+            yield full_id
     def __init__(self):
         """
             initialier creates a world and loads the foodon ontology
@@ -41,8 +43,8 @@ class IngredientsConverter:
         self.world = owl.World()
         self.foodon = self.world.get_ontology("https://raw.githubusercontent.com/FoodOntology/foodon/master/foodon.owl").load()
 
-        
-    def create_recipe_from_lexmapr(self,title : str, entities_lexmapr : List[Tuple[str, int]]) -> None:
+    
+    def create_recipe_from_lexmapr(self,title : str, entities_lexmapr : List[Tuple[str, int]]):
         """
             input: 
                 @param1: recipe name [str]
@@ -68,28 +70,45 @@ class IngredientsConverter:
         #   line_number2 : [entity2, entity3]
         #   line_number3 : [entity4]
         # }
-        entities_per_line = {}
+        def default_value():
+            return []
+        entities_per_line = defaultdict(default_value)
+        
         for entity, line_number in entities_lexmapr:
-            if line_number not in entities_per_line:
-                entities_per_line[line_number] = [entity]
-            else:
                 entities_per_line[line_number].append(entity)
         #for each line in the ingredient set
         for entity_set in entities_per_line:
             #create a new ingredient specification
-            ingredient_specification = self.world[self.imported_classes['ingredient specification']](f"{self.get_next_id()}")
+            ingredient_specification = self.create_ingredient_specification()
             #for each entity in the list
             found_first_ingredient = False
             for oboid in entities_per_line[entity_set]:
                 #find the entity in the ontology
-                entity = self.world[f"{self.base_obo_iri}{oboid}"] 
+                entity = self.world[f"{self.BASE_OBO_IRI}{oboid}"] 
                 #if it is the first food material in this line
-                if not found_first_ingredient and self.world[self.imported_classes["food material"]] in entity.ancestors():
+                if not found_first_ingredient and self.is_food_material(entity):
                     #create a relation is_about between ingredient specification and found entity
+                    #same as ingredient_specification.is_about.append(entity)
                     ingredient_specification.IAO_0000136.append(entity)
                     found_first_ingredient = True
             #add the ingredient specification to the ingredient set (use has component relation)
+            #same as ingredient_set.has_component.append(ingredient_specification)
             ingredient_set.RO_0002180.append(ingredient_specification)
+    def create_ingredient_specification(self):
+        ingredient_specification = self.imported_classes['ingredient specification']
+        onto_class = self.world[ingredient_specification]
+        onto_object = onto_class(self.get_next_id())
+        return onto_object
+    def find_entity_in_ontology(self, oboid):
+        entity_id = f"{self.BASE_OBO_IRI}{oboid}"
+        entity = self.world[entity_id]
+        return entity
+    def is_food_material(self,entity):
+        food_class_id = self.imported_classes["food material"]
+        food_class = self.world[food_class_id]
+        is_food = food_class in entity.ancestors()
+        return is_food
+    
     def create_recipe(self, label : str) -> Tuple[owl.NamedIndividual, owl.NamedIndividual]:
         """
             input:
@@ -106,6 +125,7 @@ class IngredientsConverter:
         #create a new ingredient set
         ingredient_set = self.world[self.imported_classes['ingredient set']](f"{self.get_next_id()}")
         #link the entities
+        #same as recipe.has_component.append(ingredient_set)
         recipe.RO_0002180.append(ingredient_set)
         #label the recipe
         recipe.label = label
