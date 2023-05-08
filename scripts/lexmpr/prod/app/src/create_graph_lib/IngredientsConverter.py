@@ -1,4 +1,5 @@
-from typing import List, Tuple, Final
+from typing import List, Tuple
+
 import owlready2 as owl
 import itertools
 from collections import defaultdict
@@ -10,7 +11,7 @@ class IngredientsConverter:
     The specification is currently limitted to the is_about relation. 
     """
     #used to create full IRIs based on OBO IDs
-    BASE_OBO_IRI: Final[str] = "http://purl.obolibrary.org/obo/"
+    BASE_OBO_IRI: str = "http://purl.obolibrary.org/obo/"
 
     #classes required to build a model
     imported_classes = {
@@ -42,7 +43,7 @@ class IngredientsConverter:
         """
         self.world = owl.World()
         self.foodon = self.world.get_ontology("https://raw.githubusercontent.com/FoodOntology/foodon/master/foodon.owl").load()
-
+        self.id_generator = self.get_next_id()
     
     def create_recipe_from_lexmapr(self,title : str, entities_lexmapr : List[Tuple[str, int]]):
         """
@@ -121,9 +122,9 @@ class IngredientsConverter:
             :returntype Tuple[owl.NamedIndividual, owl.NamedIndividual]
         """
         #create a new recipe
-        recipe = self.world[self.imported_classes['food recipe']](f"{self.get_next_id()}")
+        recipe = self.world[self.imported_classes['food recipe']](f"{next(self.id_generator)}")
         #create a new ingredient set
-        ingredient_set = self.world[self.imported_classes['ingredient set']](f"{self.get_next_id()}")
+        ingredient_set = self.world[self.imported_classes['ingredient set']](f"{next(self.id_generator)}")
         #link the entities
         #same as recipe.has_component.append(ingredient_set)
         recipe.RO_0002180.append(ingredient_set)
