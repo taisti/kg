@@ -7,7 +7,6 @@ from typing import Any
 
 import lexmapr.pipeline_resources as pipeline_resources
 import lexmapr.pipeline_helpers as helpers
-import pandas as pd
 from nltk import word_tokenize
 
 
@@ -27,10 +26,9 @@ class LexMaprTool:
         # Merge ``ontology_lookup_table`` into ``lookup_table``
         self.lookup_table = helpers.merge_lookup_tables(self.lookup_table, self.ontology_lookup_table)
 
-    def run(self, text: str) -> pd.Series:
+    def run(self, text: str) -> dict:
         original_sample = text.strip()
         cleaned_sample = ""
-        cleaned_sample_scientific_name = ""
         matched_components = []
         macro_status = "No Match"
         micro_status: Any = []
@@ -63,9 +61,6 @@ class LexMaprTool:
                                                                        self.lookup_table, micro_status)
             cleaned_sample = helpers.non_English_normalization_phrase(cleaned_sample, self.lookup_table,
                                                                       micro_status)
-            cleaned_sample_scientific_name = helpers.get_annotated_sample(
-                cleaned_sample_scientific_name, lemma, self.scientific_names_dict)
-            cleaned_sample_scientific_name = re.sub(' +', ' ', cleaned_sample_scientific_name)
 
         cleaned_sample = helpers.remove_duplicate_tokens(cleaned_sample)
 
@@ -162,8 +157,8 @@ class LexMaprTool:
         # Write to row
         matched_components = helpers.get_matched_component_standardized(matched_components)
 
-        results = pd.Series({
+        results = {
             "Matched_Components": str(matched_components),
             "Match_Status(Macro Level)": macro_status
-        })
+        }
         return results

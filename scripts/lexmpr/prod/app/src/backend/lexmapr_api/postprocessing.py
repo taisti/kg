@@ -16,7 +16,8 @@ class Postprocessing:
         self.lexmapr_output = lexmapr_output
 
     def run(self):
-        out = self.postprocess(self.request_input, self.lexmapr_output)
+        body = self.postprocess(self.request_input, self.lexmapr_output)
+        out = self.add_closest_sentences(body, self.request_input)
         return out
 
     @staticmethod
@@ -27,6 +28,7 @@ class Postprocessing:
         Returns:
             LexMaprOutput: requests output
         """
+
         def for_each_row(row: Dict):
             match = row["Match_Status(Macro Level)"]
             if match == "No Match":
@@ -58,6 +60,17 @@ class Postprocessing:
             )
         ]
 
+        return body
+
+    @staticmethod
+    def add_closest_sentences(body: List[dict], request_input: pd.DataFrame):
+        """
+            Find the closest sentence for an entities
+
+            Returns:
+                LexMaprOutput: json output with the closest sentences
+        """
+
         # remove None values from ingredientSet and add numer of sentence
         sentences = [
             {
@@ -83,18 +96,17 @@ class Postprocessing:
         body = [{
             'title': recipe['title'],
             'link': recipe['link'],
-            'ingredients': s,
+            'sentences_with_ingredients': s,
             'ingredientSet': [{
-                    **entity,
-                    'sentence': get_score_above(entity['name'], s)
-                    if isinstance(entity['name'], str) else
-                    [get_score_above(n, s) for n in entity['name']]
-                }
+                **entity,
+                'sentence': get_score_above(entity['name'], s)
+                if isinstance(entity['name'], str) else
+                [get_score_above(n, s) for n in entity['name']]
+            }
                 for entity in recipe['ingredientSet']
                 if entity
             ]
         }
-         for s, recipe in zip(sentences, body)
+            for s, recipe in zip(sentences, body)
         ]
-
         return body

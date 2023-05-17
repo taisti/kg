@@ -1,6 +1,6 @@
 import io
 import json
-from itertools import pairwise
+from more_itertools import pairwise
 from typing import List, Dict
 import pandas as pd
 
@@ -24,8 +24,7 @@ class Preprocessing:
         entities = self.keep_important_entities(df["ingredients_entities"])
         entities = self.pair_merge_entities(entities)
         entities = self.entities_to_string(entities)
-        csv_text = self.convert_entities_to_lexmapr_input(entities)
-        return df, csv_text
+        return df, entities
 
     @staticmethod
     def parse_input(data_input: str) -> pd.DataFrame:
@@ -115,26 +114,3 @@ class Preprocessing:
 
         results = recipes.apply(for_each_row)
         return results
-
-    @staticmethod
-    def convert_entities_to_lexmapr_input(recipes: pd.Series) -> pd.Series:
-        """
-        Converts entities to csv input format
-
-        Args:
-            recipes (pd.Series): entities without QUANTITY and UNIT
-
-        Returns:
-            pd.Series: csv string
-        """
-
-        def for_each_row(entities: List[str]):
-            ids = list(range(len(entities)))
-            df = pd.DataFrame({"Id": ids, "Text": entities})
-            s = io.StringIO()
-            df.to_csv(s, index=False)
-            data_for_lexmapr = s.getvalue()
-            return data_for_lexmapr
-
-        csv_text = recipes.apply(for_each_row)
-        return csv_text
