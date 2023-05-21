@@ -1,6 +1,8 @@
 import ast
 import re
+from operator import truth
 
+from more_itertools import pairwise
 from thefuzz import fuzz
 from thefuzz.process import extractOne
 
@@ -17,6 +19,7 @@ class Postprocessing:
 
     def run(self):
         body = self.postprocess(self.request_input, self.lexmapr_output)
+        body = self.pair_merge_entities(self.request_input, body)
         out = self.add_closest_sentences(body, self.request_input)
         return out
 
@@ -25,11 +28,23 @@ class Postprocessing:
         """
         Create requests output JSON
 
+        Args:
+            request_input (pd.DataFrame): input recipes table
+            lexmapr_output (List[pd.DataFrame]): list of analysed recipes by LexMapr
+
         Returns:
-            LexMaprOutput: requests output
+            LexMaprOutput: [{
+                "title": str,
+                "link": str,
+                "ingredientSet": list[{
+                    "match": "No Match" | "Full Term Match",
+                    "name": list[str],
+                    "oboId": list[str]
+                }]
+            }]
         """
 
-        def for_each_row(row: Dict):
+        def for_each_row(row: pd.Series):
             match = row["Match_Status(Macro Level)"]
             if match == "No Match":
                 return None
@@ -49,15 +64,78 @@ class Postprocessing:
             {
                 "title": recipe_info["title"],
                 "link": recipe_info["link"],
-                "ingredientSet": [
-                    for_each_row(entity)
-                    for _, entity in recipe_ingredients.iterrows()
-                    if len(entity)
-                ],
+                "ingredientSet": list(filter(truth, [
+                    for_each_row(row)
+                    for _, row in recipe_ingredients.iterrows()
+                ]))
             }
             for (_, recipe_info), recipe_ingredients in zip(
                 request_input.iterrows(), lexmapr_output
             )
+        ]
+
+        return body
+
+    @staticmethod
+    def pair_merge_entities(request_input: pd.DataFrame, body: List[Dict]) -> List[Dict]:
+        """
+        Merge LexMapr entities when first NER entity type is **COLOR, PHYSICAL_QUALITY, PROCESS** and second is a
+        NER type **FOOD**
+
+        Args:
+            request_input (pd.DataFrame): input recipes table
+            body (List[Dict]):  LexMaprOutput: [{
+                "title": str,
+                "link": str,
+                "ingredientSet": list[{
+                    "match": "No Match" | "Full Term Match",
+                    "name": list[str],
+                    "oboId": list[str]
+                }]
+            }]
+
+        Returns:
+            List[Dict]: list of entities with merged entities format per recipe
+        """
+
+        def for_each_row(lexmapr_ent: List[Dict], row_ner: List[Dict]):
+            # lexmapr_ent -> List[{"name": str, "oboId": list[str], "match": str}]
+            # row_ner -> List[{"start": int, "end": int, "type": str, "entity": str]}
+
+            useless_ner_entities = [
+                ent['entity']
+                for ent in row_ner
+                if ent['type'] in ['COLOR', 'PHYSICAL_QUALITY', 'PROCESS']
+            ]
+            food_ner_entities = [
+                ent['entity']
+                for ent in row_ner
+                if ent['type'] == 'FOOD'
+            ]
+
+            connected_lexmapr_entities = []
+            pairs = pairwise(lexmapr_ent)
+            for e1, e2 in pairs:
+                if all([
+                    e1['name'] in useless_ner_entities,
+                    e2['name'] in food_ner_entities
+                ]):
+                    connected_lexmapr_entities.append({
+                        **e2,
+                        'name': f"{e1['name']} {e2['name']}"
+                    })
+                    next(pairs, None)  # disable exception
+                else:
+                    connected_lexmapr_entities.append(e1)
+
+            return connected_lexmapr_entities
+
+        body = [
+            {
+                **recipe,
+                'ingredientSet': for_each_row(recipe['ingredientSet'], ner_entities)
+            }
+            for recipe, ner_entities in zip(body, request_input.ingredients_entities)
         ]
 
         return body

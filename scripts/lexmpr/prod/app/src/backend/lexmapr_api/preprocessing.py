@@ -1,6 +1,5 @@
 import io
 import json
-from more_itertools import pairwise
 from typing import List, Dict
 import pandas as pd
 
@@ -21,8 +20,7 @@ class Preprocessing:
 
     def run(self):
         df = self.parse_input(self.input)
-        entities = self.keep_important_entities(df["ingredients_entities"])
-        entities = self.pair_merge_entities(entities)
+        entities = self.keep_important_entities(df.ingredients_entities)
         entities = self.entities_to_string(entities)
         return df, entities
 
@@ -41,6 +39,7 @@ class Preprocessing:
         Returns:
             pd.DataFrame: parsed csv
         """
+
         text = io.StringIO(data_input)
         df = pd.read_csv(
             text,
@@ -64,34 +63,6 @@ class Preprocessing:
         def for_each_row(row: List[Dict]):
             important_entities = list(filter(lambda ent: ent["type"] not in ["QUANTITY", "UNIT"], row))
             return important_entities
-
-        results = recipes.apply(for_each_row)
-        return results
-
-    @staticmethod
-    def pair_merge_entities(recipes: pd.Series) -> pd.Series:
-        """
-        Merge entities when first entity type is **COLOR, PHYSICAL_QUALITY, PROCESS** and second is **FOOD**
-
-        Args:
-            recipes (pd.Series): list of entities per recipe
-
-        Returns:
-            pd.Series: list of entities with merged entities format per recipe
-        """
-
-        def for_each_row(row: List[Dict]):
-            connected_entities = [
-                {
-                    **e2,
-                    'entity': f"{e1['entity']} {e2['entity']}"
-                }
-                if e1['type'] in ['COLOR', 'PHYSICAL_QUALITY', 'PROCESS'] and e2['type'] is 'FOOD'
-                else
-                e1
-                for e1, e2 in pairwise(row)
-            ]
-            return connected_entities
 
         results = recipes.apply(for_each_row)
         return results
